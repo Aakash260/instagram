@@ -5,6 +5,7 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import axios from "axios";
 import { Post } from "../models/post.model.js";
+
 export const register = async (req, res) => {
   try {
     const { username, password, email } = req.body;
@@ -117,7 +118,7 @@ export const updateUserProfile = async (req, res) => {
       const { bio, gender } = req.body;
       const profilePicture = req.file;
       let cloudResponse;
-
+ 
       if (profilePicture) {
           const fileUri = getDataUri(profilePicture);
           cloudResponse = await cloudinary.uploader.upload(fileUri);

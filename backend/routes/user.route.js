@@ -9,7 +9,7 @@ router.post('/register',register)
 router.post('/login',login)
 router.get('/logout',logout)
 router.get('/:id/profile',isAuthenticated,getProfile)
-router.post('/profile/edit',isAuthenticated,upload.single('profilePicture'),updateUserProfile);
+router.post('/profile/edit',isAuthenticated,upload.single('profilePhoto'),updateUserProfile);
 router.get('/suggested',isAuthenticated,getSuggestedUsers)
 router.post('/followOrUnfollow/:id',isAuthenticated,followorUnfollowUser)
 
