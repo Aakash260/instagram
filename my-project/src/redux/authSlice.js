@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlice=createSlice({
     name:'auth',
     initialState:{
-       
+        suggestedUsers:[],
         user:null
     },
     reducers:{
@@ -11,10 +11,13 @@ const authSlice=createSlice({
             
             state.user=action.payload;
         },
+        setSuggestedUsers:(state,action) => {
+            state.suggestedUsers = action.payload;
+        },
         
     }
 })
 
-export const {setAuthUser} = authSlice.actions;
+export const {setAuthUser,setSuggestedUsers} = authSlice.actions;
 
 export default authSlice.reducer;

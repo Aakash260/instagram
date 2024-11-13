@@ -21,6 +21,7 @@ app.use(express.json());
 
 app.use('/api/v1/user',userRoute)
 app.use('/api/v1/message',messageRoute)
+
 app.use('/api/v1/postRoute',postRoute)
 app.get("/",(req,res)=>{
     return res.status(200).json({

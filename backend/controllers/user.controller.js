@@ -164,22 +164,18 @@ export const updateUserProfile = async (req, res) => {
 
 export const getSuggestedUsers = async (req, res) => {
   try {
-    const suggestedUser = await User.findOne({ _id: { $ne: req.id } }).select(
-      "-password"
-    );
-
-    if (!suggestedUser) {
-      return res.status(404).json({
-        message: "No suggested users found",
-        success: false,
-      });
-    }
-    return res.status(200).json({
-      suggestedUser,
-      success: true,
-    });
+      const suggestedUsers = await User.find({ _id: { $ne: req.id } }).select("-password");
+      if (!suggestedUsers) {
+          return res.status(400).json({
+              message: 'Currently do not have any users',
+          })
+      };
+      return res.status(200).json({
+          success: true,
+          users: suggestedUsers
+      })
   } catch (error) {
-    console.log(error);
+      console.log(error);
   }
 };
 
