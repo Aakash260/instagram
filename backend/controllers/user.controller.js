@@ -98,67 +98,52 @@ export const logout = async (req, res) => {
   }
 };
 
-export const getUserProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
-    const userId = req.params.id;
-    let user = await User.findById(userId).select('-password')
-    
-    return res.status(200).json({
-      user,
-      success: true,
-    });
-  } catch (error) {}
+      const userId = req.params.id;
+      let user = await User.findById(userId).populate({path:'posts', createdAt:-1}).populate('bookmarks');
+      return res.status(200).json({
+          user,
+          success: true
+      });
+  } catch (error) {
+      console.log(error);
+  }
 };
 
 export const updateUserProfile = async (req, res) => {
-  const imageUrl = 'https://m.media-amazon.com/images/I/91yuQ3m+cvL._AC_SX522_.jpg';
-  
-  // Fetch the image from the URL
-  const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-  
-  const pic = {
-    file: {
-      fieldname: 'profilePicture',
-      originalname: '91yuQ3m+cvL._AC_SX522_.jpg',
-      encoding: '7bit',
-      mimetype: 'image/jpeg',
-      destination: '/uploads/',
-      filename: '91yuQ3m+cvL._AC_SX522_.jpg',
-      path: imageUrl,  // URL path of the image
-      size: response.data.length,  // Size in bytes
-      buffer: Buffer.from(response.data),  // Convert the image data to a buffer
-    }
-  };
-
   try {
-    const userId = req.id;
-    const { bio, gender } = req.body;
-    const profilePicture = pic.file;
-    let cloudResponse;
+      const userId = req.id;
+      const { bio, gender } = req.body;
+      const profilePicture = req.file;
+      let cloudResponse;
 
-    if (profilePicture) {
-      const fileuri = getDataUri(profilePicture);
-      cloudResponse = await cloudinary.uploader.upload(fileuri);
-    }
+      if (profilePicture) {
+          const fileUri = getDataUri(profilePicture);
+          cloudResponse = await cloudinary.uploader.upload(fileUri);
+      }
 
-    const user = await User.findById(userId).select('-password');
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-        success: false,
+      const user = await User.findById(userId).select('-password');
+      if (!user) {
+          return res.status(404).json({
+              message: 'User not found.',
+              success: false
+          });
+      };
+      if (bio) user.bio = bio;
+      if (gender) user.gender = gender;
+      if (profilePicture) user.profilePicture = cloudResponse.secure_url;
+
+      await user.save();
+
+      return res.status(200).json({
+          message: 'Profile updated.',
+          success: true,
+          user
       });
-    }
 
-    if (bio) user.bio = bio;
-    if (gender) user.gender = gender;
-    if (profilePicture) user.profilePicture = cloudResponse.secure_url;
-
-    await user.save();
-    return res
-      .status(200)
-      .json({ message: "profile updated successfully", success: true, user });
   } catch (error) {
-    console.log(error);
+      console.log(error);
   }
 };
 
